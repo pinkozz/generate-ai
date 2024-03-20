@@ -1,0 +1,21 @@
+{% extends "index.html" %}
+
+{% block main %}
+<!-- If user submitted their prompt -->
+{% if finished and prompt %}
+
+<h1>{{prompt}}...<br><span style="color: #76ABAE;">...{{ finished }}</span> </h1>
+<!-- If not -->
+{% else %}
+<form action="/finish-sentence" method="post">
+  <div class="col-auto">
+    <input type="text" class="form-control" name="prompt" placeholder="Enter an unfinished sentence">
+
+		<div class="d-grid gap-2" style="margin-top: 5px;">
+			<button type="submit" class="btn btn-outline-light mb-2">Generate</button>
+		</div>
+  </div>
+</form>
+{% endif %}
+
+{% endblock %} 
