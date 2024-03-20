@@ -1,7 +1,7 @@
 ## Generate AI
 Generative AI web app based on OpenAI's GPT and DALL-E models. Written on Python Flask.
-![Screenshot from 2024-03-15 15-07-29](https://github.com/pinkozz/generate-ai/assets/136079534/c7938cfe-8cf9-4704-8a38-7bc0a1ca7200)
-![Screenshot from 2024-03-15 15-07-20](https://github.com/pinkozz/generate-ai/assets/136079534/05ead335-2919-41a8-9c81-b5179418dcd9)
+
+https://github.com/pinkozz/generate-ai/assets/136079534/8b321111-6a5d-4b6c-88bb-bce10e7026f4
 
 !! Before starting the app on your machine, ensure you have Python3 installed !!
 
