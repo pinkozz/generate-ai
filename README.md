@@ -1,7 +1,7 @@
 ## Generate AI
-Generative AI web app based on OpenAI's GPT and DALL-E models. Written on Python Flask.
+This website showcases the power of generative AI for creating images and completing sentences based on user input. It features a simple, user-friendly design, making advanced AI accessible for creative and practical use. The platform highlights the potential of AI in transforming ideas into engaging visual and textual content.
 
-https://github.com/pinkozz/generate-ai/assets/136079534/73ff1926-7a4a-4535-b17f-84325a0064d1
+https://github.com/user-attachments/assets/31ab52d9-b55e-4521-8aae-ab9b4ae0458a
 
 !! Before starting the app on your machine, ensure you have Python3 installed !!
 
@@ -21,9 +21,18 @@ Install requirements
 pip3 install -r requirements.txt
 ```
 
-Create API key on OpenAI's website and paste it instead of "API_KEY" in main.py:
+Download Pretrained Models: Run the following commands to pre-download the models used by the app:
 ```
-client = OpenAI(api_key="API_KEY")
+from transformers import AutoTokenizer, AutoModelForCausalLM
+from diffusers import StableDiffusionPipeline
+
+# For text generation
+tokenizer = AutoTokenizer.from_pretrained("gpt2")
+model = AutoModelForCausalLM.from_pretrained("gpt2")
+
+# For image generation
+pipe = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4")
+
 ```
 
 Run the app
