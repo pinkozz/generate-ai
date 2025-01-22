@@ -1,24 +1,38 @@
 {% extends "index.html" %}
 
 {% block main %}
+
+{% if error %}
+{{ error }}
+{% endif %}
+
 <!-- If user submitted their prompt -->
 {% if url and prompt %}
 
-<h2>An image of {{ prompt }}</h2>
+<h2>
+	An image of {{ prompt }}
+</h2>
 
 <div class="col-auto">
 	<img src="{{ url }}" class="img-fluid" style="height: 75%; width: 75%;">
 </div>
 <!-- If not -->
+
 {% else %}
 <form action="/generate-image" method="post">
-  <div class="col-auto">
-    <input type="text" class="form-control" name="prompt" placeholder="Enter your prompt">
-
-		<div class="d-grid gap-2" style="margin-top: 5px;">
-			<button type="submit" class="btn btn-outline-dark mb-2">Generate</button>
-		</div>
+	<div class="mb-3">
+		<label class="left">Enter your prompt</label>
+    <input class="form-control" type="text" class="form-control" name="prompt">
+	</div>
+	
+	<div class="mb-3">
+		<label class="left">Enter number of inference steps</label>
+    <input class="form-control" type="number" class="form-control" min="1" max="50" name="inference_steps">
   </div>
+
+  <div class="d-grid gap-2">
+		<input class="btn btn-outline-dark" type="submit">
+	</div>
 </form>
 {% endif %}
 

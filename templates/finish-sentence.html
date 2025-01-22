@@ -8,12 +8,18 @@
 <!-- If not -->
 {% else %}
 <form action="/finish-sentence" method="post">
-  <div class="col-auto">
-    <input type="text" class="form-control" name="prompt" placeholder="Enter an unfinished sentence">
+  <div class="mb-3">
+    <label class="left">Enter your prompt</label>
+    <input class="form-control" type="text" class="form-control" name="prompt">
+  </div>
 
-		<div class="d-grid gap-2" style="margin-top: 5px;">
-			<button type="submit" class="btn btn-outline-dark mb-2">Generate</button>
-		</div>
+  <div class="mb-3">
+    <label class="left">Set the temperature</label>
+    <input class="form-control" type="number" class="form-control" name="temperature" min="1" max="99">
+  </div>
+
+  <div class="d-grid gap-2">
+    <input class="btn btn-outline-dark" type="submit">
   </div>
 </form>
 {% endif %}

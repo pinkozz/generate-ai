@@ -2,6 +2,13 @@
  * Globals
  */
 
+ .left {
+  float: left;
+ }
+
+ .right {
+  float: right;
+ }
 
 /* Custom default button */
 .btn-light,

@@ -4,15 +4,20 @@ import os
 from random import randint
 
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
-from diffusers import StableDiffusionPipeline
+import torch.quantization as quant
+from transformers import AutoTokenizer, AutoModelForCausalLM
+from diffusers import StableDiffusionPipeline, DDIMScheduler
 
-image_generator = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4")
-image_generator = image_generator.to("cuda" if torch.cuda.is_available() else "cpu")
+# Load model with optimizations
+image_generator = StableDiffusionPipeline.from_pretrained(
+    "runwayml/stable-diffusion-v1-5",
+    torch_dtype = torch.float32
+)
 
 # For text generation (e.g., GPT-2 or GPT-3-like models)
 text_model_name = "gpt2"
 text_tokenizer = AutoTokenizer.from_pretrained(text_model_name)
+text_tokenizer.pad_token = text_tokenizer.eos_token
 text_model = AutoModelForCausalLM.from_pretrained(text_model_name)
 
 app = Flask(__name__)
@@ -28,8 +33,9 @@ def generate_index():
 @app.route("/generate-image", methods=["POST"])
 def generate():
     prompt = request.form["prompt"]
+    inference_steps = request.form["inference_steps"]
     try:
-        image = image_generator(prompt=prompt).images[0] # Generate image
+        image = image_generator(prompt=prompt, num_inference_steps=int(inference_steps)).images[0] # Generate image
 
         output_path = f"static/generated/{f"generation{randint(1,9999999999)}"}.png"
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
@@ -56,22 +62,34 @@ def finish():
     current_page = "/finish-sentence"  
     data = request.form
     prompt = data['prompt']
-
-    # Generate text completion
-    input_ids = text_tokenizer.encode(prompt, return_tensors="pt")
+    temperature = float(data['temperature'])/100
 
     # Generate output, continuing from the prompt
-    output = text_model.generate(
-        input_ids, 
-        max_length=len(input_ids[0]) + 50,  # Extend the prompt by up to 50 tokens
+    inputs = text_tokenizer(
+        prompt, 
+        padding=True,
+        truncation=True,
+        return_tensors="pt",
+        return_attention_mask=True
+    )
+
+
+    output_ids = text_model.generate(
+        input_ids=inputs["input_ids"],
+        attention_mask=inputs["attention_mask"],
+        max_length=50,
         num_return_sequences=1,
-        do_sample=True,
+        temperature=temperature,
+        top_k=50,
+        top_p=0.9,
+        do_sample=True
     )
 
     # Decode only the continuation (exclude the prompt itself)
-    finished_sentence = text_tokenizer.decode(
-        output[0][len(input_ids[0]):], skip_special_tokens=True
-    )
+    finished_sentence = text_tokenizer.decode(output_ids[0], skip_special_tokens=True)
+
+    dot = finished_sentence[len(prompt):].index(".")
+    finished_sentence = f"{finished_sentence[len(prompt):][:dot]}."
 
     return render_template("finish-sentence.html", prompt=prompt, finished=finished_sentence, current_page=current_page)
 
