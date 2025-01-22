@@ -1,10 +1,12 @@
 from flask import Flask, request, render_template
-from transformers import pipeline, AutoModelForCausalLM, AutoTokenizer
-from random import randint
-import torch
-import os
 
+import os
+from random import randint
+
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
 from diffusers import StableDiffusionPipeline
+
 image_generator = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4")
 image_generator = image_generator.to("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -13,14 +15,7 @@ text_model_name = "gpt2"
 text_tokenizer = AutoTokenizer.from_pretrained(text_model_name)
 text_model = AutoModelForCausalLM.from_pretrained(text_model_name)
 
-import torch
-from diffusers import StableDiffusionPipeline
-
 app = Flask(__name__)
-
-# pipeline = StableDiffusionPipeline.from_pretrained(
-#     "stabilityai/stable-diffusion-2-1"
-# ).to("cuda" if torch.cuda.is_available() else "cpu")
 
 @app.route("/", methods=["GET"])
 def index():
@@ -34,7 +29,7 @@ def generate_index():
 def generate():
     prompt = request.form["prompt"]
     try:
-        image = image_generator(prompt=prompt).images[0]# Generate image
+        image = image_generator(prompt=prompt).images[0] # Generate image
 
         output_path = f"static/generated/{f"generation{randint(1,9999999999)}"}.png"
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
