@@ -5,7 +5,7 @@ import torch
 import os
 
 from diffusers import StableDiffusionPipeline
-image_generator = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", torch_dtype=torch.float16)
+image_generator = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4")
 image_generator = image_generator.to("cuda" if torch.cuda.is_available() else "cpu")
 
 # For text generation (e.g., GPT-2 or GPT-3-like models)
@@ -18,9 +18,9 @@ from diffusers import StableDiffusionPipeline
 
 app = Flask(__name__)
 
-pipeline = StableDiffusionPipeline.from_pretrained(
-    "stabilityai/stable-diffusion-2-1"
-).to("cuda" if torch.cuda.is_available() else "cpu")
+# pipeline = StableDiffusionPipeline.from_pretrained(
+#     "stabilityai/stable-diffusion-2-1"
+# ).to("cuda" if torch.cuda.is_available() else "cpu")
 
 @app.route("/", methods=["GET"])
 def index():
@@ -34,7 +34,7 @@ def generate_index():
 def generate():
     prompt = request.form["prompt"]
     try:
-        image = pipeline(prompt=prompt).images[0]# Generate image
+        image = image_generator(prompt=prompt).images[0]# Generate image
 
         output_path = f"static/generated/{f"generation{randint(1,9999999999)}"}.png"
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
